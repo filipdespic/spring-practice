@@ -1,13 +1,44 @@
 package com.example.controllers;
 
+import com.example.model.Product;
+import com.example.services.ProductService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 public class MainController {
+
+    private final ProductService productService;
+
+    public MainController(ProductService productService) {
+        this.productService = productService;
+    }
+
+    @GetMapping("/products")
+    public String viewProducts(Model model) {
+        List<Product> products = productService.findAll();
+        model.addAttribute("products", products);
+
+        return "products.html";
+    }
+
+    @PostMapping("/products")
+    public String addProduct(
+            @RequestParam String name,
+            @RequestParam double price,
+            Model model
+    ) {
+        Product p = new Product();
+        p.setName(name);
+        p.setPrice(price);
+        productService.addProduct(p);
+        var products = productService.findAll();
+        model.addAttribute("products", products);
+        return "products.html";
+    }
 
     @GetMapping("/home/{username}/{color}")
     public String home(@PathVariable String color, @PathVariable String username, Model page) {
