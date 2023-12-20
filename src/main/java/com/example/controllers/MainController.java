@@ -1,6 +1,7 @@
 package com.example.controllers;
 
 import com.example.model.Product;
+import com.example.services.LoggedUserManagementService;
 import com.example.services.ProductService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,9 +13,24 @@ import java.util.List;
 public class MainController {
 
     private final ProductService productService;
+    private final LoggedUserManagementService loggedUserManagementService;
 
-    public MainController(ProductService productService) {
+    public MainController(ProductService productService, LoggedUserManagementService loggedUserManagementService) {
         this.productService = productService;
+        this.loggedUserManagementService = loggedUserManagementService;
+    }
+
+    @GetMapping("/main")
+    public String home(@RequestParam(required = false) String logout, Model model) {
+        if (logout != null) {
+            loggedUserManagementService.setUsername(null);
+        }
+        String username = loggedUserManagementService.getUsername();
+        if (username == null) {
+            return "redirect:/";
+        }
+        model.addAttribute("username", username);
+        return "main.html";
     }
 
     @GetMapping("/products")

@@ -1,5 +1,6 @@
 package com.example.processors;
 
+import com.example.services.LoggedUserManagementService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
@@ -7,20 +8,27 @@ import org.springframework.web.context.annotation.RequestScope;
 @RequestScope
 public class LoginProcessor {
 
+    private final LoggedUserManagementService loggedUserManagementService;
+
     private String username;
     private String password;
+
+    public LoginProcessor(LoggedUserManagementService loggedUserManagementService) {
+        this.loggedUserManagementService = loggedUserManagementService;
+    }
 
     public boolean login() {
         String username = this.getUsername();
         String password = this.getPassword();
 
-        System.out.println(username + password);
+        boolean loginResult = false;
 
-        if ("a".equals(username) && "b".equals(password)) {
-            return true;
-        } else {
-            return false;
+        if ("filip".equals(username) && "password".equals(password)) {
+            loginResult = true;
+            loggedUserManagementService.setUsername(username);
         }
+
+        return loginResult;
     }
 
     public String getUsername() {
