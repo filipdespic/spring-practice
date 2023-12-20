@@ -2,6 +2,7 @@ package com.example.controllers;
 
 import com.example.model.Product;
 import com.example.services.LoggedUserManagementService;
+import com.example.services.LoginCountService;
 import com.example.services.ProductService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,10 +15,12 @@ public class MainController {
 
     private final ProductService productService;
     private final LoggedUserManagementService loggedUserManagementService;
+    private final LoginCountService loginCountService;
 
-    public MainController(ProductService productService, LoggedUserManagementService loggedUserManagementService) {
+    public MainController(ProductService productService, LoggedUserManagementService loggedUserManagementService, LoginCountService loginCountService) {
         this.productService = productService;
         this.loggedUserManagementService = loggedUserManagementService;
+        this.loginCountService = loginCountService;
     }
 
     @GetMapping("/main")
@@ -26,10 +29,13 @@ public class MainController {
             loggedUserManagementService.setUsername(null);
         }
         String username = loggedUserManagementService.getUsername();
+        int count = loginCountService.getCount();
+
         if (username == null) {
             return "redirect:/";
         }
         model.addAttribute("username", username);
+        model.addAttribute("loginCount", count);
         return "main.html";
     }
 
