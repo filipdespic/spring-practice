@@ -17,12 +17,12 @@ public class PurchaseRepository {
     }
 
     public void storePurchase(Purchase purchase) {
-        String sql = "INSERT INTO purchase VALUES (?, ?, ?)";
+        String sql = "INSERT INTO purchases VALUES (?, ?, ?)";
         jdbc.update(sql, purchase.getId(), purchase.getProduct(), purchase.getPrice());
     }
 
     public List<Purchase> findAllPurchases() {
-        String sql = "SELECT * FROM purchase";
+        String sql = "SELECT * FROM purchases";
 
         RowMapper<Purchase> purchaseRowMapper = (r, i) -> {
             Purchase rowObject = new Purchase();
