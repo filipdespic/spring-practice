@@ -1,5 +1,6 @@
 package com.example.services;
 
+import com.example.exceptions.AccountNotFoundException;
 import com.example.model.Account;
 import com.example.model.PaymentDetails;
 import com.example.repositories.AccountRepository;
@@ -13,7 +14,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Service
-@Transactional
 public class TransferService {
 
     private final AccountRepository accountRepository;
@@ -22,14 +22,20 @@ public class TransferService {
         this.accountRepository = accountRepository;
     }
 
+
+    @Transactional
     public void transferMoney(long idSourceAccount, long idDestinationAccount, BigDecimal amount) {
-        Account sourceAccount = accountRepository.findAccountById(idSourceAccount);
-        Account destinationAccount = accountRepository.findAccountById(idDestinationAccount);
+        Account sourceAccount = accountRepository.findById(idSourceAccount).orElseThrow(() -> new AccountNotFoundException());
+        Account destinationAccount = accountRepository.findById(idDestinationAccount).orElseThrow(() -> new AccountNotFoundException());
         accountRepository.changeAmount(idSourceAccount, sourceAccount.getAmount().subtract(amount));
         accountRepository.changeAmount(idDestinationAccount, destinationAccount.getAmount().add(amount));
     }
 
-    public List<Account> getAllAccounts() {
-        return accountRepository.findAllAccounts();
+    public Iterable<Account> getAllAccounts() {
+        return accountRepository.findAll();
+    }
+
+    public List<Account> findAccountsByName(String name) {
+        return accountRepository.findAccountsByName(name);
     }
 }
